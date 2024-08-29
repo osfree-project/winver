@@ -29,8 +29,15 @@ BOOL WINAPI ShellAbout(HWND hWnd, LPCSTR lpszCaption, LPCSTR lpszAboutText,
 int PASCAL WinMain (HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
 {
    char szTitle[50];
+//   const char * (CDECL *wine_get_version)(void);
+//   const DWORD (WINAPI *GetProcAddress32W)( DWORD hModule, LPCSTR lpszProc );
+//   LoadLibraryEx32W
 
    LoadString(inst, IDS_PACKAGE_NAME, szTitle, 50);
-   return ShellAbout(0, szTitle, NULL, NULL);
+
+//   wine_get_version = (void *)GetProcAddress32W(GetModuleHandle("ntdll.dll"), "wine_get_version");
+//   if (wine_get_version) lstrcat( szTitle, wine_get_version() );
+
+   return !ShellAbout(0, szTitle, NULL, NULL);
 }
 
