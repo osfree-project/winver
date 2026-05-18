@@ -1,6 +1,6 @@
 # osFree Janus Version (winver)
 
-![Language: C](https://img.shields.io/badge/language-C%2077.9%25-blue)
+![Language: C](https://img.shields.io/badge/language-C-blue)
 ![License: LGPL-2.1](https://img.shields.io/badge/license-LGPL%202.1-green)
 ![Platform: Win16](https://img.shields.io/badge/platform-Win16-lightgrey)
 ![Status: Alpha](https://img.shields.io/badge/status-alpha-red)
