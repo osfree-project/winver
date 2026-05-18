@@ -1,1 +1,4 @@
 #define IDS_PACKAGE_NAME 101
+#define IDD_VERSION_DLG  0x10
+#define IDC_VERSION_TEXT 100
+
