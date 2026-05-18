@@ -26,18 +26,76 @@
 BOOL WINAPI ShellAbout(HWND hWnd, LPCSTR lpszCaption, LPCSTR lpszAboutText,
                 HICON hIcon);
 
+char szVersionBuf[128];
+
+BOOL WINAPI VersionDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (msg)
+    {
+    case WM_INITDIALOG:
+        SetDlgItemText(hDlg, IDC_VERSION_TEXT, szVersionBuf);
+        return TRUE;
+    case WM_COMMAND:
+        EndDialog(hDlg, 1);
+        return TRUE;
+    }
+    return FALSE;
+}
+
 int PASCAL WinMain (HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
 {
-   char szTitle[50];
-//   const char * (CDECL *wine_get_version)(void);
-//   const DWORD (WINAPI *GetProcAddress32W)( DWORD hModule, LPCSTR lpszProc );
-//   LoadLibraryEx32W
+    char szTitle[50];
+    DWORD dwVersion, dwFlags;
+    WORD  wVersion;
+    int   nMajor, nMinor;
+    LPSTR lpMode  = "";
+    LPSTR lpDebug = "";
+    FARPROC lpfnDlgProc;
 
-   LoadString(inst, IDS_PACKAGE_NAME, szTitle, 50);
+    if (hPrevInstance) return 0;
 
-//   wine_get_version = (void *)GetProcAddress32W(GetModuleHandle("ntdll.dll"), "wine_get_version");
-//   if (wine_get_version) lstrcat( szTitle, wine_get_version() );
+    /* @todo: Try shell.dll first */
+    LoadString(inst, IDS_PACKAGE_NAME, szTitle, 50);
+    return !ShellAbout(0, szTitle, NULL, NULL);
 
-   return !ShellAbout(0, szTitle, NULL, NULL);
+    /* Get version */
+    dwVersion = GetVersion();
+    wVersion  = LOWORD(dwVersion);
+    nMajor    = LOBYTE(wVersion);
+    nMinor    = HIBYTE(wVersion);
+
+    /* Get winflags */
+    dwFlags = GetWinFlags();
+
+    /* set current mode */
+    if (dwFlags & WF_CPU286)
+    {
+        if (dwFlags & WF_STANDARD)
+            lpMode = "Standard Mode";
+        else
+            lpMode = "386 Enhanced Mode";
+    }
+    else
+    {
+        if (dwFlags & WF_LARGEFRAME)
+            lpMode = "Large Frame EMS";
+        else if (dwFlags & WF_SMALLFRAME)
+            lpMode = "Small Frame EMS";
+        else
+            lpMode = "Real Mode";
+    }
+
+    /* Swbug version */
+    if (GetSystemMetrics(SM_DEBUG))
+        lpDebug = "DEBUG ";
+
+    wsprintf(szVersionBuf, "%s osFree Janus %sVersion %d.%02d",
+             lpDebug, lpMode, nMajor, nMinor);
+
+    lpfnDlgProc = MakeProcInstance((FARPROC)VersionDlgProc, hInstance);
+    DialogBox(hInstance, MAKEINTRESOURCE(IDD_VERSION_DLG), NULL, lpfnDlgProc);
+    FreeProcInstance(lpfnDlgProc);
+
+    return 1;
 }
 
