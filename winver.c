@@ -23,8 +23,8 @@
 #include "winver.h"
 
 
-BOOL WINAPI ShellAbout(HWND hWnd, LPCSTR lpszCaption, LPCSTR lpszAboutText,
-                HICON hIcon);
+//BOOL WINAPI ShellAbout(HWND hWnd, LPCSTR lpszCaption, LPCSTR lpszAboutText, HICON hIcon);
+typedef BOOL (WINAPI *SHELLABOUTPROC)(HWND, LPCSTR, LPCSTR, HICON);
 
 char szVersionBuf[128];
 
@@ -51,12 +51,26 @@ int PASCAL WinMain (HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
     LPSTR lpMode  = "";
     LPSTR lpDebug = "";
     FARPROC lpfnDlgProc;
-
+    HINSTANCE hShell;
+    SHELLABOUTPROC pShellAbout;
+  
     if (hPrevInstance) return 0;
 
-    /* @todo: Try shell.dll first */
+    /* Try shell.dll first */
     LoadString(inst, IDS_PACKAGE_NAME, szTitle, 50);
-    return !ShellAbout(0, szTitle, NULL, NULL);
+
+    hShell = LoadLibrary("SHELL.DLL");
+    if (hShell)
+    {
+        pShellAbout = (SHELLABOUTPROC)GetProcAddress(hShell, "ShellAbout");
+        if (pShellAbout)
+        {
+            BOOL bRet = pShellAbout(NULL, szTitle, NULL, NULL);
+            FreeLibrary(hShell);
+            return !bRet;  /* оригинальное завершение */
+        }
+        FreeLibrary(hShell);
+    }
 
     /* Get version */
     dwVersion = GetVersion();
