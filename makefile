@@ -12,7 +12,7 @@ DESC = Windows Version
 srcfiles = $(p)winver$(e) 
 # defines additional options for C compiler
 ADD_COPT = -sg
-IMPORTS  = SHELLABOUT SHELL.22
+#IMPORTS  = SHELLABOUT SHELL.22
 HEAPSIZE = 4k
 
 !include $(%ROOT)tools/mk/appsw16.mk

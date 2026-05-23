@@ -22,22 +22,28 @@
 #include "windows.h"
 #include "winver.h"
 
+typedef BOOL (WINAPI *SHELLABOUT)(HWND hWnd, LPCSTR lpszCaption, LPCSTR lpszAboutText, HICON hIcon);
 
-BOOL WINAPI ShellAbout(HWND hWnd, LPCSTR lpszCaption, LPCSTR lpszAboutText,
-                HICON hIcon);
-
-int PASCAL WinMain (HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
+int PASCAL WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
 {
-   char szTitle[50];
-//   const char * (CDECL *wine_get_version)(void);
-//   const DWORD (WINAPI *GetProcAddress32W)( DWORD hModule, LPCSTR lpszProc );
-//   LoadLibraryEx32W
+	char szTitle[50];
+	SHELLABOUT lpShellAbout;
+	int retVal=0;
 
-   LoadString(inst, IDS_PACKAGE_NAME, szTitle, 50);
+	LoadString(inst, IDS_PACKAGE_NAME, szTitle, sizeof(szTitle));
 
-//   wine_get_version = (void *)GetProcAddress32W(GetModuleHandle("ntdll.dll"), "wine_get_version");
-//   if (wine_get_version) lstrcat( szTitle, wine_get_version() );
+	//Needed for Win95 and later??
+	//InitCommonControls();
 
-   return !ShellAbout(0, szTitle, NULL, NULL);
+	lpShellAbout=(SHELLABOUT)GetProcAddress(GetModuleHandle("shell.dll"), "ShellAbout");
+
+	if (lpShellAbout)
+	{
+		retVal=!lpShellAbout(0, szTitle, NULL, NULL);
+	} else {
+		// Most probably, we are in Windows 3.0 or earler, so no ShellAbout
+		// Use own dialog, not standard...
+	}
+	return retVal;
 }
 
