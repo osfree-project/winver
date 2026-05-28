@@ -10,7 +10,7 @@ DESC = osFree Janus Version
 #defines object file names in format $(p)objname$(e)
 srcfiles = $(p)winver$(e) 
 # defines additional options for C compiler
-ADD_COPT = -sg
+ADD_COPT = -sg -0
 HEAPSIZE = 4k
 
 EXPORTS = VersionDlgProc.1

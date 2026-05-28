@@ -61,9 +61,9 @@ int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline,
 
     /* Try shell.dll first (@todo Does'n work under Real Mode Windows 3.0) */
     oldErrorMode = SetErrorMode(SEM_NOOPENFILEERRORBOX);
-    hShell = LoadLibrary("SHELL.DLL");
+    hShell = LoadLibrary("SHELL");
     SetErrorMode(oldErrorMode);
-    if (hShell)
+    if (hShell>=HINSTANCE_ERROR)
     {
         pShellAbout = (SHELLABOUT)GetProcAddress(hShell, "ShellAbout");
         if (pShellAbout)
