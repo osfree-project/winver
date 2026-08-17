@@ -4,7 +4,6 @@
 #
 
 DESC = osFree Janus Version
-ADD_COPT = -sg
 
 EXPORTS = VersionDlgProc.1
 
