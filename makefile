@@ -4,7 +4,6 @@
 #
 
 DESC = osFree Janus Version
-TARGET_API = WIN
 ADD_COPT = -sg
 
 EXPORTS = VersionDlgProc.1
