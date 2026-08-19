@@ -3,7 +3,7 @@
 # (c) osFree project
 #
 
-DESC = osFree Janus Version
+DESCRIPTION = Janus Version
 
 EXPORTS = VersionDlgProc.1
 
