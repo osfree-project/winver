@@ -20,6 +20,7 @@
  */
 
 #include "windows.h"
+
 #include "winver.h"
 
 typedef BOOL (WINAPI *SHELLABOUT)(HWND hWnd, LPCSTR lpszCaption, LPCSTR lpszAboutText, HICON hIcon);
@@ -59,21 +60,33 @@ int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline,
 
     LoadString(hInstance, IDS_PACKAGE_NAME, szTitle, sizeof(szTitle));
 
-    /* Try shell.dll first (@todo Does'n work under Real Mode Windows 3.0) */
-    oldErrorMode = SetErrorMode(SEM_NOOPENFILEERRORBOX);
-    hShell = LoadLibrary("SHELL");
-    SetErrorMode(oldErrorMode);
-    if (hShell>=HINSTANCE_ERROR)
+    /* Get winflags */
+    dwFlags = GetWinFlags();
+
+    /* Try shell.dll first  */
+    /* Real mode windows has a problem with dynamic loading of */
+    /* non-existend DLLs, so try only for protected mode */
+    if (dwFlags & WF_PMODE) 
     {
-        pShellAbout = (SHELLABOUT)GetProcAddress(hShell, "ShellAbout");
-        if (pShellAbout)
+	// Disable errors trap and try to load SHELL.DLL
+        oldErrorMode = SetErrorMode(SEM_NOOPENFILEERRORBOX);
+        hShell = LoadLibrary("SHELL");
+        SetErrorMode(oldErrorMode);
+
+        if (hShell>=HINSTANCE_ERROR)
         {
-            BOOL bRet = pShellAbout(NULL, szTitle, NULL, NULL);
+            pShellAbout = (SHELLABOUT)GetProcAddress(hShell, "ShellAbout");
+            if (pShellAbout)
+            {
+                BOOL bRet = pShellAbout(NULL, szTitle, NULL, NULL);
+                FreeLibrary(hShell);
+                return !bRet;
+            }
             FreeLibrary(hShell);
-            return !bRet;
         }
-        FreeLibrary(hShell);
     }
+
+    /* No SHELL.DLL, so construct own dialog */
 
     /* Get version */
     dwVersion = GetVersion();
@@ -84,10 +97,6 @@ int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline,
     /* Get DOS version from high word  */
     nDosMajor = HIBYTE(HIWORD(dwVersion));
     nDosMinor = LOBYTE(HIWORD(dwVersion));
-
-    /* Get winflags */
-    dwFlags = GetWinFlags();
-
 
     /* set current mode */
     if (dwFlags & WF_PMODE)
