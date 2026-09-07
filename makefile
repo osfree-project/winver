@@ -4,6 +4,8 @@
 #
 
 DESCRIPTION = Janus Version
+LICENSE = LGPL-2.1-or-later
+EXCLUDE_LICENSE=README.md
 
 EXPORTS = VersionDlgProc.1
 
