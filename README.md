@@ -59,7 +59,8 @@ Distributed under the **GNU Lesser General Public License v2.1 (LGPL-2.1)**. See
 
 - Copyright (C) 1997 Marcel Baur
 - Copyright (C) 2023 Yuri Prokushev and the [osFree](https://github.com/osfree-project) team
-
+ 
 ---
 
 *Last updated: May 18, 2026*
+* SPDX-License-Identifier: CC0-1.0
