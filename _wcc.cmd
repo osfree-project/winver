@@ -1,5 +1,7 @@
 @echo off
-set verbose=yes
+rem SPDX-FileCopyrightText: Copyright (C) 2026 osFree Project
+rem SPDX-License-Identifier: LGPL-2.1-or-later
+
 set root=.
 :loop
 if exist "%root%\tools\mk\all.mk" goto found

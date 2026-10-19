@@ -21,14 +21,45 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+/*!
+ * @file winver.c
+ * @brief Windows 3.x "About" utility (winver) clone.
+ *
+ * Tries to forward the dialog to SHELL.DLL's ShellAbout() when the
+ * system is running in protected mode and the library is available.
+ * Otherwise falls back to a self-owned dialog built from GetVersion()
+ * and GetWinFlags() results.
+ */
+
 #include "windows.h"
 
 #include "winver.h"
 
+/*!
+ * @typedef SHELLABOUT
+ * @brief Signature of ShellAbout() exported by SHELL.DLL.
+ */
 typedef BOOL (WINAPI *SHELLABOUT)(HWND hWnd, LPCSTR lpszCaption, LPCSTR lpszAboutText, HICON hIcon);
 
+/*!
+ * @brief Version string shown by the fallback dialog.
+ */
 char szVersionBuf[128];
 
+/*!
+ * @brief Dialog procedure for the fallback "About" dialog.
+ *
+ * On WM_INITDIALOG sets the version text; on any WM_COMMAND ends the
+ * dialog.
+ *
+ * @param[in] hDlg    Dialog handle.
+ * @param[in] msg     Message identifier.
+ * @param[in] wParam  Message-specific parameter.
+ * @param[in] lParam  Message-specific parameter.
+ * @retval TRUE   Message handled.
+ * @retval FALSE  Message not handled.
+ * @return TRUE if the message was handled, FALSE otherwise.
+ */
 BOOL WINAPI VersionDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -43,6 +74,22 @@ BOOL WINAPI VersionDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
+/*!
+ * @brief Program entry point.
+ *
+ * Loads the package name string, probes SHELL.DLL in protected mode,
+ * and either invokes ShellAbout() or builds and shows a self-owned
+ * dialog describing the current Windows version, mode and CPU.
+ *
+ * @param[in] hInstance     Instance handle of the current process.
+ * @param[in] hPrevInstance Previous instance handle (unused).
+ * @param[in] cmdline       Command line (unused).
+ * @param[in] show          Show-window command (unused).
+ * @retval 0  A previous instance exists, or ShellAbout() reported failure.
+ * @retval 1  Normal completion (ShellAbout() succeeded or own dialog ran).
+ * @return 1 on normal completion, 0 if the result of ShellAbout()
+ *         should be reported as-is.
+ */
 int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, int show)
 {
     char szTitle[50];
