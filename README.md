@@ -1,3 +1,6 @@
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<!-- SPDX-FileCopyrightText: (C) osFree Project -->
+
 # osFree Janus Version (winver)
 
 ![Language: C](https://img.shields.io/badge/language-C-blue)
@@ -63,4 +66,4 @@ Distributed under the **GNU Lesser General Public License v2.1 (LGPL-2.1)**. See
 ---
 
 *Last updated: May 18, 2026*
-* SPDX-License-Identifier: CC0-1.0
+
